@@ -1,0 +1,625 @@
+\documentclass[hidelinks,11pts]{article}
+\usepackage[export]{adjustbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[title,titletoc]{appendix}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{bbm}
+\usepackage{blindtext}
+\usepackage{bookmark}
+\usepackage{booktabs}
+\usepackage{cancel}
+\usepackage{caption}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{epigraph}
+\usepackage[left]{eurosym}
+\usepackage{float}
+\usepackage[bottom]{footmisc}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage{lscape}
+\usepackage{mathtools}
+\usepackage{mdframed}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage[sort]{natbib}
+\usepackage[normalem]{ulem}
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{titlesec}
+\usepackage{tgpagella}
+\usepackage{varwidth}
+\usepackage{verbatim} %comment block
+\usepackage{wrapfig}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{xltabular}
+\usepackage{graphicx}
+\usepackage[normalem]{ulem}
+\usepackage{tabularx}
+\usepackage{geometry}
+
+\renewcommand{\epigraphsize}{\normalsize}
+\setlength{\epigraphwidth}{0.7\textwidth}
+\renewcommand{\textflush}{flushright}
+\renewcommand{\sourceflush}{flushright}
+
+
+\renewcommand\appendixpagename{Mathematical Appendix}
+\renewcommand{\baselinestretch}{1.45}
+
+\hypersetup{
+    colorlinks=true, 
+    urlcolor= Violet, 
+    linkcolor=Black, 
+    citecolor=Blue, 
+    filecolor = Blue
+    } 
+
+%\usepackage{natbib}
+\bibliographystyle{plainnat}
+%\bibdata{My Library.bib}
+%\usepackage[backend=biber, style=authoryear-icomp]{biblatex}
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Prb}{\mathbb{P}}
+\DeclareMathOperator{\R}{\mathbb{R}}
+\DeclareMathOperator{\N}{\mathbb{N}}
+\DeclareMathOperator{\1}{\mathbbm{1}}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+
+
+\titleformat{\part}{\centering\normalfont\Large\bfseries}{\partname\hspace{5pt}\thepart\hspace{5pt}}{5pt}{--\ }
+
+\titleformat{\part}{\centering\normalfont\Large\bfseries}{\partname\hspace{5pt}\thepart\hspace{5pt}}{5pt}{--\ }
+
+\makeatletter
+\def\@fnsymbol#1{\ensuremath{\ifcase#1\or \dagger\or \ddagger\or
+   \mathsection\or \mathparagraph\or \|\or **\or \dagger\dagger
+   \or \ddagger\ddagger \else\@ctrerr\fi}}
+    \makeatother
+
+
+\begin{document}
+
+        \title{\scshape{Quantitative Methods in Finance \\ COVID-19 Population Gap }}%Arbitrage Pricing Theory: Decomposition of the Risk Premium}}
+        \author{Charaf Zguiouar\\
+        Francisco Javier Alvarez Aparicio
+        \\Lucas Rouleau
+        \\Ludovic Paul
+        \\Maysaa Rais 
+        \\Natalia Cárdenas Frías}
+        \date{\today}
+        \maketitle 
+
+\begin{abstract}
+    The primary objective of this study is to evaluate the discernible impact of the COVID-19 pandemic on global and national population growth trends, specifically focusing on France, Japan, Sweden, the USA, and Colombia. We aim to quantify the population gap attributed to the pandemic by analyzing historical population dynamics before December 2019. To facilitate accurate future trend predictions, the study will employ an array of statistical models to compare their prediction, including AR(1), ARIMA, SARIMA, hybrid ARIMA-ANN, and hybrid SARIMA-LSTM for Time Series Forecasting. The hybrid models seem particularly promising in this endeavor. 
+\end{abstract}
+
+\newpage
+\section*{Introduction}
+As the COVID-19 pandemic unfolded, it brought deep changes across the globe that are yet to be studied and fully understood. 
+Among those assessing the impact of the health crisis on demography can be interesting and non-trivial. 
+Indeed, the official death toll associated with the disease is just shy of 7 million worldwide as of November 2023 \citep{WHOCoronavirusCOVID19}. 
+The hypothesis that this constitutes by itself an important boost to mortality leading to lower population level with respect to 'potential' seems natural but it is too simplistic as the pandemic and the public policies installed to affront it generated broader changes. 
+Top of mind comes the fact that lockdown policies could contribute to modifying mortality rates from other sources. 
+For instance, since broad parts of societies where this policy took place didn't leave their homes, it is plausible that deaths due to violence or accidents didn't occur. 
+However, it is also plausible to see hikes in the deaths from diseases that were not screened and treated on time (e.g. cancer) as people avoided getting into hospital settings. 
+In the same spirit, the effect of the crisis on natality and migration is non-obvious as fertility and migrating decisions are affected by uncertainty. 
+
+Leveraging the fact that demography has long been studied using time series analysis \cite[being a seminal work in the subject]{saboia1974modeling} we decided to run a variety of univariate models to have a first approximation of the realized effect of the pandemic on population level in different geographies. 
+We use monthly data from the first two decades of the century to get forecasts of the population level of five countries and the world. 
+We proxy the counterfactual, natural population levels by these forecasts and attribute the difference in the realized population figures to the COVID-19 effect. 
+This is far from a rigorous, causal analysis of the question but can help us get a first idea of the direction of the effect (if any) of a major public health crisis on demographic variables that can have crucial effects on societies in the long term (think for instance on growth and productivity questions).
+It is also to be noted that since we are working only with population data we are not unbundling the contributions of the three determinants of population changes (mortality, fertility, and migration). 
+It is also to be noted that by focusing on higher frequency data from a reduced number of years we are ensuring to have enough data points to be able to get decent estimates but we avoid caching secular changes in the demographic dynamics. 
+
+
+
+
+
+\section{Literature Review}
+As recommended, we display the results of our literature review in the following tabular. 
+\input{LR}
+
+
+\section{Empirical Strategy}
+
+\subsection{Data Collection}
+We collected monthly demographic data for five countries: France, Japan, the USA, Sweden, and Colombia, as well as for the world. 
+The data set covers several years before March 2020, and it extends until August or September 2023, allowing us to train our model with sufficient data points even if the period study is less than two decades.%In addition, our recent data is close to the present, which enables the calculation of the gap almost to the present moment.
+
+To collect monthly data for the population in order to take into account the seasonality, we went to official governmental statistics websites for France, the USA, and Sweden (see References).
+For Japan, we found the data on the website «Statistic Dashboard» which gives data provided by the national government and private companies. 
+Although we had difficulties finding the last country, we finally managed to find monthly data for a 5th country, Colombia, as well as for the world population, thanks to Factset (a data provider), in .xlsx format. 
+
+After the files had been collected (4 csv and 2 xlsx), we proceeded to the cleaning. We noticed that the date format from the csv was widely different from one file to another, making the cleaning and formatting tenuous and time-consuming via Python. We preferred to standardize the date format throughout all files manually. We took this occasion to convert all csv files to an xlsx format and remove useless columns to make the data easier to import and manipulate later on. 
+In the end, there was only the date and population for each country. 
+
+After importing the files in Python, we performed some operations to clean the data (transform into a data frame, transpose some columns, delete unnecessary rows, and convert the population into millions for all countries...). Also, because some countries have data for different dates, we have sliced the data to have common dates for all countries. These data take into account population changes from 2001-01-01 to 2023-06-01.
+
+%Once after having a dataframe containing the populations of countries and the world for common dates, we were able to display the descriptive statistics and plot the graph.
+%Moreover, we decided to calculate, display descriptive statistics, and plot the average monthly population growth rate for each country. 
+%Finally, we plot the evolution of the growth rate of the population over time for each country. 
+%In these graphs, we can notice that the USA, Colombia, and the world have experienced significant population growth over this period. On the other hand, we note that Japan has not had demographic growth and that their number of inhabitants has even decreased.
+
+%Plotting was also practical to make sure that the global shape of the time series made sense and detect anomalies:
+%  -For example, we discovered that Zambia, our original 5th country, had zero growth for most months and surged in January. It was then evident that this was yearly data copied and pasted all the months of the corresponding year. 
+%  Moreover, in our first batch from Japan, there were great spikes down in October followed by same-sized spikes up in November. This phenomenon amplified as time went on. In the data attached, this has been largely resolved except for November 2020 and July 2021 (which are out of the training sample). Colombia has a spike that we can attribute to a census done at that time, and an increase between 2017 and 2020 that could come from the situation in Venezuela. Finally, the world data that we managed to obtain seemed reasonable when plotted directly, but the growth rate brought to light one-year plateaus that suggest it was in fact annual. We suspect that the annual growth rate was calculated, converted into a monthly rate, and then used to bootstrap monthly numbers.
+
+
+
+
+
+\subsection{Methodology}
+To conduct a thorough analysis of population forecasting, various models such as AR, MA, ARIMA, SARIMA, and Hybrid ARIMA (combining ARIMA and ANN models) are used. This study assesses the effectiveness of these models in various demographic scenarios, both globally and at a national level.
+
+
+In 1974, \cite{saboia1974modeling} harnessed the power of AutoRegressive (AR) and Moving Average (MA) models, enhancing their predictive capabilities with Box-Jenkins' time series analysis techniques, to effectively forecast population trends in Sweden. \cite{mcnown1989forecasting} provided compelling evidence for the effectiveness of AutoRegressive Integrated Moving Average (ARIMA) models in mortality forecasting, leveraging parameterized time series approaches to yield accurate results.
+
+\cite{zhang2003time} work inspired the creation of the Hybrid ARIMA and ANN model, aiming to enhance accuracy by capturing both linear (via ARIMA) and non-linear (via ANN) components of time series data. 
+
+
+
+
+
+\subsection{Comparative Analysis}
+
+
+
+Regarding the \textbf{Hybrid ARIMA} model's performance, it shows promising low mean squared error values, notably zero for Japan, the USA, Colombia, Sweden, and the world. However, this model displays fluctuating forecasts, encompassing a blend of both underestimation and overestimation trends. For instance, Japan's predictions gradually declined from 4.839 to 4.831, while France depicted a broader range from 4.178 to 4.117. Similarly, the USA's predictions ranged between 5.804 and 5.821. During the test phase, Japan's errors fluctuated between approximately -0.006 and -0.003, while France showed a range of around 0.07 to 0.08, and Colombia ranged between 0.011 and 0.013.
+
+
+
+
+
+Comparatively, the \textbf{SARIMA-LSTM} model revealed a rather consistent but varied performance when forecasting COVID-19 cases. For Japan, Colombia, and Sweden, the model performs reasonably well with low Mean Absolute Percentage Error values: 15.24\%, 13.35\%, and 7.98\% respectively, the predictions closely align with the actual data for these countries. The Mean Squared Error, Mean Absolute Error, and Root Mean Squared Error are reported as zero for all countries which could indicate a possible overfitting to the training data.
+
+The AR(1) model exhibits moderate predictive performance in forecasting population gaps across various countries. While displaying moderate mean squared error (MSE) values, it maintains some bias in its estimates for countries like France, Colombia, and Sweden, ranging from -0.017 to 0.007. However, its mean absolute percentage error (MAPE) values fall between 0.026 and 0.441, demonstrating significant variation in accuracy across different nations. Notably, the RMSE values span between 0.0004 and 0.0202, indicating a relatively diverse margin of error in forecasting.
+
+Comparatively, the ARIMA model presents more varied results with lower errors in MSE and RMSE across countries like Japan, the USA, and Sweden. It showcases a wider variation in bias across regions, with notable underestimations in Colombia and overestimations in France. The MAPE values are notably lower than the AR(1) model, ranging between 0.027 and 0.42, indicating relatively improved accuracy in its predictions.
+
+The SARIMA model shows a mixed performance, presenting higher MSE, RMSE, and MAPE values across countries like Japan and Colombia. However, it displays consistency in bias, ranging from 0.001 to 0.014, with varying underestimation or overestimation tendencies in different regions. This model shows more uniformity in the errors across different countries, indicating a balanced yet slightly less accurate predictive performance compared to the ARIMA model, especially in countries like Japan and Colombia.
+
+
+
+\section{Results}
+
+
+
+\subsection{Basic AR(1) model}
+This is the most simple type of time series model and relies on the possibility of forecasting the population at time $t$ with the realization of the population and $t-1$. 
+In this case, we automatically control for seasonality and differentiate the population series $d$ times until they are stationary (per the results of an ADF test) and check the number of relevant lags to consider capturing in the model. For all of the geographies $g$ we find that the previous month's population is sufficient to perform estimations of the form:
+    \begin{equation*}
+        \forall g,\; \Delta^{d_g} log Pop_{g, t} = \psi_g \Delta^{d-1_g} log Pop_{g, t-1} + \varepsilon_{g, t}, \; \varepsilon_{g} \sim WN
+    \end{equation*}
+Importantly, this estimation implies that we consider the underlying mechanisms driving the demographic dynamics of a given country to be unchanged between 2001 and 2019 which can be plausible as they are very slow-moving variables. We also avoid any questioning on the quality and precision of the data we are using. 
+Finally, we are not considering any interdependencies between all the countries (in particular, this wouldn't allow any migration mechanism): the estimation for each is independent of the others. 
+After integrating back the series, we get the following forecast outcome that we can compare with the data points we collected for the 2020-2023 period (Figure \ref{fig:AR}). 
+In our opinion, the most interesting result from this first approximation is that the effect of the pandemic on population seems to be heterogeneous across geographies: while the effect is negative and rather large in Japan, France and Colombia seem to have a larger population than expected after COVID-19. The result in Sweden and across the world seems to be rather neutral. 
+Regarding performance, note that this model performs best on the world's data set using RMSE and MAPE criteria, and for Colombia under a lowest bias criterion. 
+
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width= \textwidth]{AR/gapsAR.png}
+    \caption*{Summary}
+    \end{subfigure}
+    \caption{Auto-regressive models, order 1}
+    \label{fig:AR}
+    \floatfoot{Note that the measure in the y-axis is the log of the population level for each geography in millions. Since the log function is a monotonic and positive transformation, the intuitive interpretation of the graphs to see the population gap remains unchanged.}
+\end{figure}
+
+
+
+\subsection{ARIMA model }
+Mathematically, an ARIMA model can be represented as: 
+
+  \begin{equation*}
+(1 - \phi_1 B - \phi_2 B^2 - \ldots - \phi_p B^p)(1 - B)^d Y_t = c + (1 + \theta_1 B + \theta_2 B^2 + \ldots + \theta_q B^q) \epsilon_t
+  \end{equation*}
+  
+where $Y\_t$ denotes the observed values, $p$ represents the autoregressive order, $d$ represents the differencing order, $q$ represents the moving average order, $\phi$ and $\theta$ are parameters to be estimated, $B$ is the backshift operator, $\epsilon_t$ represents the error term, and 'c' is a constant term.
+
+The ARIMA (AutoRegressive Integrated Moving Average) models were employed to assess the population gap during the COVID-19 pandemic, focusing on the difference between predicted and observed values. These models are represented as ARIMA$(p, d, q)$, where $p$ denotes the autoregressive component, $d$ signifies differencing and $q$ represents the moving average component. The best-fit models for different countries had varying orders (in particular, seasonality was not achieved at the same $d$ for all countries). For instance, the model for 'Japan' was determined as ARIMA(2, 2, 25), while 'France' had ARIMA(2, 0, 36), 'USA' with ARIMA(2, 2, 39), 'Colombia' with ARIMA(2, 1, 35), 'Sweden' with ARIMA(2, 2, 40), and 'World' with ARIMA(2, 3, 38). The $d$ parameter is particularly essential as it represents the differencing order required to stationarize the series, which is fundamental in assessing the population gap over time. 
+
+
+The ARIMA models, with orders $(p, d, q)$ determined for each country, produced predictions for the population gap during the COVID-19 pandemic. Key performance figures show that 'Sweden' had the most accurate predictions with an MSE of 6.65e-07 and a MAE of 0.000649, indicating a minimal gap between predicted and observed values. On the other hand, 'France' had a higher MSE of 3.75e-04 and MAE of 0.015733, suggesting a less accurate prediction.
+
+
+
+\subsection{SARIMA}
+We also implemented this variation of an ARIMA model, automatizing the choice of the best parameters with Python, to better capture seasonal changes in the population dynamics.
+The results are presented graphically in Figure \ref{fig:SARIMA}. 
+While we still have heterogeneous effects that might change signs, the results are not the same as in previous models, highlighting that our results might not be robust. 
+
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width= \textwidth]{SARIMA/gapsSARIMA.png}
+    \caption*{Summary}
+    \end{subfigure}
+    \caption{SARIMA models and gaps}
+    \label{fig:SARIMA}
+    \floatfoot{Note that the measure in the y-axis is the log of the population level for each geography in millions. Since the log function is a monotonic and positive transformation, the intuitive interpretation of the graphs to see the population gap remains unchanged.}
+\end{figure}
+
+
+\subsection{Hybrid Models}
+The hybrid model features an Artificial Neural Network (ANN) capturing the non-linear component by modeling the residuals ($e_t$). These residuals, $e_t$, are fed into the ANN to generate the non-linear component in the form of a function, $f$, defined by the neural network, and accounting for the random error, $\varepsilon_t$, at each time $t$. The combined forecast of this hybrid model is derived as the sum of the ARIMA model forecast ($\hat{L}_t$) and the ANN model forecast for the residuals ($\hat{N}_t$). The equation for the hybrid model's combined forecast is:
+
+ \begin{equation*}
+\text{Hybrid Model Forecast} = \hat{L}_t + \hat{N}_t
+ \end{equation*}
+ 
+
+The hybrid ARIMA model shows fluctuating forecast ranges for countries like Japan, France, and the USA. This model's predictions vary between underestimation, ranging from -0.0002 to 0.004, and overestimation. For instance, it consistently underestimates figures by 0.0006 to 0.004 across different time points. Conversely, the SARIMA-LSTM model consistently exhibits a downward trajectory in its forecasts, maintaining a steady underestimation trend, averaging between 0.0006 to 0.004 compared to actual figures. The SARIMA-LSTM's uniform underestimation leads to a consistent downward slope in the forecasted population gaps, whereas the hybrid ARIMA model demonstrates a wider and less predictable forecast range due to its varying overestimation and underestimation patterns. Specifically, the SARIMA-LSTM consistently underestimates figures by 0.0006 to 0.004, while the Hybrid ARIMA model displays a wider range from -0.0002 to 0.004, indicating a less stable prediction pattern.
+
+Looking at the training errors of the models, the SARIMA model's population gap predictions consistently show a trend of underestimation, with figures ranging from 0.0006 to 0.004 below the actual population gap. Meanwhile, the Hybrid ARIMA model presents a broader range of errors, fluctuating between -0.0002 to 0.004, showcasing a mix of overestimation and underestimation. The SARIMA-LSTM's consistent underestimation leads to a steady decline in the forecasted population gaps, while the Hybrid ARIMA model's wider error range suggests a less predictable and more volatile pattern, with a mix of overestimation and underestimation.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{SARIMA_LSTM.png}
+    \caption{SARIMA-LSTM model forecasts}
+    \label{fig:hybSARIMA}
+\end{figure}
+
+The SARIMA-LSTM's uniform underestimation trend results in a gradual downward slope in the forecasted population gaps. Conversely, the Hybrid ARIMA model delivers a more volatile forecast, displaying a wider variance and indicating an unpredictable mix of overestimation and underestimation. Specifically, the SARIMA-LSTM consistently underestimates figures by 0.0006 to 0.004, while the Hybrid ARIMA model's wider range from -0.0002 to 0.004 suggests a less stable prediction pattern.
+
+
+%In Table \ref{tab:all_errors}, we present the mean squared error (MSE), mean absolute error (MAE), root mean squared error (RMSE), mean absolute percentage error (MAPE), and bias metrics are provided for various models (AR(1), ARIMA, Hybrid ANN, SARIMA, and SARIMA-LSTM) across different countries. The table shows the performance of each model in predicting time series data for Colombia, France, Japan, Sweden, the USA, and the world.
+
+
+\subsection{Model perfomance}
+In order to find the best-performing model, using Tables \ref{tab:1}, \ref{tab:2}, and \ref{tab:3} present the best-performing models for each country based on the values of root mean squared error (RMSE), mean squared error (MSE), and bias, respectively. The selected models and their corresponding metrics offer valuable insights into the performance of each model for the specific context of each country.
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Country} & \textbf{Best Model} & \textbf{Lowest RMSE} \\
+\hline
+Colombia & SARIMA-LSTM & 0.005631 \\
+France & SARIMA-LSTM & 0.001097 \\
+Japan & SARIMA-LSTM & 0.000303 \\
+Sweden & SARIMA-LSTM & 0.000352 \\
+Usa & SARIMA-LSTM & 0.005243 \\
+World & AR(1) & 0.000246 \\
+\hline
+\end{tabular}
+\caption{Best model and its corresponding lowest RMSE for each country.}
+\label{tab:1}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Country} & \textbf{Best Model} & \textbf{Lowest Bias} \\
+\hline
+Colombia & AR(1) & -0.017314 \\
+France & Hybrid ANN & -0.035729 \\
+Japan & Hybrid ANN & -0.002040 \\
+Sweden & Hybrid ANN & -0.003207 \\
+Usa & Hybrid ANN & -0.006157 \\
+World & SARIMA-LSTM & -0.008461 \\
+\hline
+\end{tabular}
+\caption{Best model and its corresponding lowest Bias for each country.}
+\label{tab:2}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Country} & \textbf{Best Model} & \textbf{Lowest MAPE} \\
+\hline
+Colombia & SARIMA-LSTM & 0.125410 \\
+France & SARIMA-LSTM & 0.026207 \\
+Japan & SARIMA-LSTM & 0.005413 \\
+Sweden & SARIMA-LSTM & 0.013149 \\
+Usa & SARIMA-LSTM & 0.090173 \\
+World & AR(1) & 0.002284 \\
+\hline
+\end{tabular}
+\caption{Best model and its corresponding lowest MAPE for each country.}
+\label{tab:3}
+\end{table}
+
+
+\newpage
+
+
+\section{Discussion and Conclusion}
+In our view, this exercise can only be viewed as a very preliminary approximation to the question of the pandemic's effect on demographic data, not only because of the very narrow geographic scope of our analysis but because it is too broad. 
+Indeed, we do not examine the components of demographic dynamics that might as well have opposite effects for different countries and require more variables to properly account for the effect of the pandemic. 
+Namely, using macroeconomic and political data can help us understand migration flows that can heavily affect the demographic dynamics of a given country. 
+In a similar fashion, desegregation between genders and age groups can also give us a better understanding of the differential effects of the crisis (e.g. if drops in population are mainly due to higher risk for the elderly) and its implications for the demographic future of the countries. 
+Also, the data treatment left us dubious of its quality: we need to note that most the population data relies on estimations made between censuses that happen with several years of difference and can be in fine misleading and carry noise to the analysis\footnote{See for example this recent case in Colombia \hyperlink{https://www.bbc.com/mundo/noticias-america-latina-46146957}{here}. With the 2018 census, the Government realized that their estimation of the total population used was $9\%$ representing almost $5$ million people higher than in reality.}. It is possible that we must wait several years to have the definitive data for the early 2020's.
+
+
+However, the comparison of several univariate models has the advantage that it can give us a good idea if there is any effect to uncover and in which direction, and if there seems to be any robust relationship. While our results seem to not be very robust for many of the countries we analyze it gives us some hints on the challenges of this endeavor. 
+In particular, note that the sign of the population gap switches between models for most of the countries but for Japan, signaling that the effects might be clearer in this economy that is already aging very fast. 
+
+The SARIMA-LSTM model appears as a strong contender in predicting population gaps across diverse geographies, showcasing promising precision and low error metrics such as Root Mean Squared Error (RMSE) and Mean Absolute Percentage Error (MAPE). While it displays remarkable accuracy in countries like France, Japan, Sweden, and the USA, the consistently low error rates also raise a concern about potential over fitting to the training data, which might limit its applicability to new, unseen data.
+
+
+
+
+
+
+%\section*{Conclusion}
+
+%no MA(1)
+%The COVID-19 pandemic has brought several changes globally, our comparative analysis explored how well the different models that were proposed helped us come to a conclusion about the "population gap" caused by this pandemic. Our comparative analysis involved the fitting and modeling of several models that were presented above, starting with simpler and ending with more sophisticated ones, such as an AR(1), ARIMA, SARIMA, and a Hybrid ARIMA model. In general, it can be observed that each model presented different levels of accuracy and different estimations for the population. 
+
+%Furthermore, this study provides insight into the dynamics of the population, but further research would be needed to create more refined models for different kinds of analysis, this study does not take into account other regional data, that would be relevant to predicting the population gap, since the countries we studied does not have homogeneous characteristics, and one could infer that the ability of a country in managing the pandemic would also have an impact in the models. 
+\newpage
+
+
+\section*{Team Contributions}
+
+Writing, Literature Review, Model Selection, Model Calibration, Population Gap Analysis, Data Collection
+\begin{table}[ht]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|l|}
+        \hline
+        \textbf{Team Member Name} & \textbf{Contribution} & \textbf{Level of Contribution} \\
+        \hline
+        Charaf Zguiouar          & Building and calibrating the models, implementing the econometric models and the hybrid ones.   &  High$+$ \\ 
+        \hline
+        Francisco Javier Alvarez  & Writing, Literature Review, Model Calibration, Population Gap Analysis &  Medium \\
+        \hline
+        Lucas Rouleau             & Writing, Data collection, Data cleaning & Medium\\
+        \hline
+        Ludovic Paul              & Writing, Data Collection, Data Cleaning and Analysis, Structure of project & Medium \\
+        \hline
+        Maysaa Rais               & Writing, Literature Review, Model Calibration, Population Gap Analysis &  High\\
+        \hline
+        Natalia Cardenas Frías   & Writing, Literature Review, Population Gap Analysis, Model testing &  High\\
+        \hline
+    \end{tabularx}
+    \caption{Team Contributions}
+    \label{tab:contributions}
+\end{table}
+
+\newpage
+\bibliography{biblio.bib}
+
+Sources for Data collection: 
+Population France monthly (1975-2023): https://www.insee.fr/fr/statistiques/serie/000436387
+
+Population USA monthly (1959-2023): https://fred.stlouisfed.org/series/POPTHM
+
+Population Japan monthly  (1975-2023): https://dashboard.e-stat.go.jp/en/timeSeriesResult?indicatorCode=0201010000000010000 
+
+
+Population Sweden monthly  (2000-2023): https://www.statistikdatabasen.scb.se/pxweb/en/ssd/
+
+Colombia & world : Factset
+
+
+
+\newpage
+\section*{Appendix}
+ 
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure1.png}
+    \caption{Evolution of the population of the 5 countries between 2001-01-01 and 2023-06-01}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure2.png}
+    \caption{Evolution of the world population}
+    \label{fig:enter-label}
+\end{figure}
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{Descriptive statistics}
+  \begin{tabular}{lcccccc}
+    \toprule
+    & Japan & France & USA & Colombia & Sweden & World \\
+    \midrule
+    Count & 272.0 & 272.0 & 272.0 & 272.0 & 272.0 & 272.0 \\
+    Mean & 127.15 & 63.16 & 312.92 & 44.14 & 9.61 & 7188.29 \\
+    Std & 0.91 & 1.94 & 15.66 & 3.66 & 0.54 & 553.25 \\
+    Min & 124.48 & 59.27 & 283.96 & 38.38 & 8.88 & 6237.51 \\
+    25\% & 126.87 & 61.65 & 299.38 & 41.10 & 9.10 & 6702.95 \\
+    50\% & 127.40 & 63.44 & 314.27 & 43.68 & 9.50 & 7194.91 \\
+    75\% & 127.79 & 64.84 & 327.88 & 46.76 & 10.12 & 7685.47 \\
+    Max & 128.10 & 65.95 & 335.50 & 51.09 & 10.55 & 8092.63 \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:desc}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{{Descriptive statistics of the monthly growth rate of the population}}
+  \begin{tabular}{lcccccc}
+    \toprule
+    & Japan & France & USA & Colombia & Sweden & World \\
+    \midrule
+    Count & 271.0 & 271.0 & 271.0 & 271.0 & 271.0 & 271.0 \\
+    Mean & -6.95E-05 & 0.000394 & 0.000616 & 0.001057 & 0.000636 & 0.000961 \\
+    Std & 0.000534 & 0.000166 & 0.000200 & 0.000545 & 0.000324 & 0.000126 \\
+    Min & -0.00378 & -4.58E-05 & -0.000166 & -8.62E-06 & -9.15E-05 & 0.000691 \\
+    25\% & -0.000323 & 0.000290 & 0.000520 & 0.000853 & 0.000424 & 0.000896 \\
+    50\% & -5.47E-05 & 0.000398 & 0.000665 & 0.000933 & 0.000595 & 0.001029 \\
+    75\% & 0.000227 & 0.000515 & 0.000753 & 0.001050 & 0.000841 & 0.001055 \\
+    Max & 0.00317 & 0.000741 & 0.000916 & 0.008390 & 0.001791 & 0.001086 \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:desc2}
+\end{table}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure 9.png}
+    \caption{Average monthly population growth rate }
+    \label{fig:enter-label}
+\end{figure}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure 3.png}
+    \caption{France's population growth rate over time}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure 4.png}
+    \caption{USA's population growth rate over time}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure 5.png}
+    \caption{Columbia's population growth rate over time}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure 6.png}
+    \caption{Sweden's population growth rate over time}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure 7.png}
+    \caption{Japan's population growth rate over time}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure 8.png}
+    \caption{World's population growth rate over time}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{AR1.png}
+  \caption{AR(1) Model Forecasts}
+  \label{fig:ar1}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{SARIMA.png}
+  \caption{SARIMA Model Forecasts}
+  \label{fig:ar1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{ARIMA_ANN.png}
+    \caption{Hybrid ARIMA Model Forecasts}
+    \label{fig:hybARIMA}
+\end{figure}
+
+\newpage
+\begin{table}[!htbp]
+  \centering
+  \caption{Mean Squared Error (MSE) for different models}
+  \label{tab:mse}
+  \begin{tabular}{lccccc}
+    \toprule
+    \multirow{2}{*}{Country} & \multicolumn{5}{c}{Model} \\
+    \cmidrule(lr){2-6}
+    & AR(1) & ARIMA & Hybrid ANN & SARIMA & SARIMA-LSTM \\
+    \midrule
+    Colombia & 4.096837e-04 & 2.031006e-04 & 0.005064 & 0.000329 & 3.170805e-05 \\
+    France & 9.278912e-05 & 3.746904e-04 & 0.001912 & 0.000002 & 1.202473e-06 \\
+    Japan & 4.475346e-05 & 2.405598e-05 & 0.000009 & 0.000079 & 9.175799e-08 \\
+    Sweden & 5.561803e-07 & 6.650375e-07 & 0.000019 & 0.000025 & 1.241455e-07 \\
+    Usa & 3.761557e-05 & 4.413014e-05 & 0.000047 & 0.000034 & 2.748419e-05 \\
+    World & 6.031690e-08 & 5.756466e-05 & 0.000061 & 0.000057 & 7.608202e-05 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Bias for different models}
+  \label{tab:bias}
+  \begin{tabular}{lccccc}
+    \toprule
+    \multirow{2}{*}{Country} & \multicolumn{5}{c}{Model} \\
+    \cmidrule(lr){2-6}
+    & AR(1) & ARIMA & Hybrid ANN & SARIMA & SARIMA-LSTM \\
+    \midrule
+    Colombia & -0.017314 & -0.012667 & 0.064160 & 0.014094 & 0.004918 \\
+    France & -0.008374 & 0.015733 & -0.035729 & 0.001259 & 0.001096 \\
+    Japan & 0.005947 & 0.004343 & -0.002040 & 0.007847 & 0.000223 \\
+    Sweden & -0.000025 & 0.000581 & -0.003207 & -0.003181 & 0.000309 \\
+    Usa & 0.005594 & 0.006085 & -0.006157 & 0.005375 & 0.005238 \\
+    World & 0.000205 & -0.005721 & 0.006005 & -0.005676 & -0.008461 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Mean Absolute Percentage Error (MAPE) for different models}
+  \label{tab:mape}
+  \begin{tabular}{lccccc}
+    \toprule
+    \multirow{2}{*}{Country} & \multicolumn{5}{c}{Model} \\
+    \cmidrule(lr){2-6}
+    & AR(1) & ARIMA & Hybrid ANN & SARIMA & SARIMA-LSTM \\
+    \midrule
+    Colombia & 0.441430 & 0.323454 & 1.638205 & 0.359231 & 0.125410 \\
+    France & 0.200061 & 0.376077 & 0.857100 & 0.030073 & 0.026207 \\
+    Japan & 0.123156 & 0.089950 & 0.056691 & 0.162508 & 0.005413 \\
+    Sweden & 0.026116 & 0.027662 & 0.148795 & 0.158866 & 0.013149 \\
+    Usa & 0.096287 & 0.104740 & 0.107544 & 0.092515 & 0.090173 \\
+    World & 0.002284 & 0.063629 & 0.066784 & 0.063131 & 0.094158 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Mean Absolute Error (MAE) for different models}
+  \label{tab:mae}
+  \begin{tabular}{lccccc}
+    \toprule
+    \multirow{2}{*}{Country} & \multicolumn{5}{c}{Model} \\
+    \cmidrule(lr){2-6}
+    & AR(1) & ARIMA & Hybrid ANN & SARIMA & SARIMA-LSTM \\
+    \midrule
+    Colombia & 0.017314 & 0.012667 & 0.064160 & 0.014098 & 0.004918 \\
+    France & 0.008374 & 0.015733 & 0.035877 & 0.001259 & 0.001096 \\
+    Japan & 0.005947 & 0.004343 & 0.002738 & 0.007847 & 0.000261 \\
+    Sweden & 0.000613 & 0.000649 & 0.003490 & 0.003736 & 0.000309 \\
+    Usa & 0.005594 & 0.006085 & 0.006248 & 0.005375 & 0.005238 \\
+    World & 0.000205 & 0.005721 & 0.006005 & 0.005676 & 0.008461 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\end{document}
