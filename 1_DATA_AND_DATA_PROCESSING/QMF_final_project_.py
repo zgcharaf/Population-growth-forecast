@@ -141,7 +141,7 @@ world=world.astype(float)
 world= world * 1000
 
 
-#We use common data for all countries between 2001-01-01 and 2023-05-01
+#We use common data for all countries between 2001-01-01 and 2023-06-01
 japan = japan['2001-01-01':'2023-06-01']
 columbia= columbia['2001-01-01':'2023-06-01']
 france = france['2001-01-01':'2023-06-01']
