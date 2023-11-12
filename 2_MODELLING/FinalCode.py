@@ -54,17 +54,25 @@ COUNTRIES =['Japan', 'France', 'Usa', 'Colombia', 'Sweden'] #Scope of our analys
 FILE_NAME= '1_DATA/population_data_bis.xlsx'                #Change if needed
 
 #create function to open file with data and set index 
-def process_data(path, countries=[]):
-    df = pd.read_excel(path)
-    df=df.set_index('Date')
+# =============================================================================
+# def process_data(path, countries=[]):
+#     df = pd.read_excel(path)
+#     df=df.set_index('Date')
+# 
+#     return df,np.log(df).dropna() #np.log(df).pct_change().dropna()
+# =============================================================================
 
-    return df,np.log(df).dropna() #np.log(df).pct_change().dropna()
+#df,data = process_data(FILE_NAME,COUNTRIES)
 
-df,data = process_data(FILE_NAME,COUNTRIES)
+
+#1, 1, 1, 0, 1
+data = pd.read_excel(FILE_NAME)
+data = data.set_index('Date')
+data = np.log(data)
+#data = data.diff().dropna()
 
 data.columns #ok 
 data #ok 
-
 
 #Don't have any missing values after cleaning in previous file: we can continue 
 def plot_nan_percentage(data):
@@ -193,13 +201,7 @@ We need to check how to define the variables to get statioarity
 orders =determine_differencing_order_for_all(data) # 2, 0, 2, 1, 2
 orders
 
-#1, 1, 1, 0, 1
-data_level = pd.read_excel(FILE_NAME)
-data_level = data_level.set_index('Date')
-data_level = np.log(data_level)
-data_level = data_level.diff().dropna()
-
-test = determine_differencing_order_for_all(data_level)
+#test = determine_differencing_order_for_all(data_level)
 
 
 #%% Decompose series and seasonality study 
@@ -238,7 +240,7 @@ def decompose_data(data):
 
     return dec_trend
 
-# Example usage
+# Example usage. get gr
 decomposed_data = decompose_data(data)
 
 
