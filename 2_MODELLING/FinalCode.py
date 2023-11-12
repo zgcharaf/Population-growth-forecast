@@ -51,7 +51,7 @@ os.chdir('/Users/nataliacardenasf/Documents/GitHub/Population-growth-forecast-us
 
 #%% Start - Import cleaned data and check quality 
 COUNTRIES =['Japan', 'France', 'Usa', 'Colombia', 'Sweden'] #Scope of our analysis
-FILE_NAME= '1_DATA/population_data_bis.xlsx'                #Change if needed
+FILE_NAME= '1_DATA/population_data_final.xlsx'                #Change if needed
 
 #create function to open file with data and set index 
 # =============================================================================
@@ -67,7 +67,9 @@ FILE_NAME= '1_DATA/population_data_bis.xlsx'                #Change if needed
 
 #1, 1, 1, 0, 1
 data = pd.read_excel(FILE_NAME)
-data = data.set_index('Date')
+data = data.set_index(data[0])
+data = data.iloc[:, 1:]
+
 data = np.log(data)
 #data = data.diff().dropna()
 
@@ -240,7 +242,7 @@ def decompose_data(data):
 
     return dec_trend
 
-# Example usage. get gr
+# Example usage. get graphs with the decomposition (1 per series)
 decomposed_data = decompose_data(data)
 
 
@@ -356,7 +358,7 @@ def analyze_arima_orders(data, stationnarity_orders,max_lags=120, acf_pacf_lags=
 
     return best_orders
 
-
+#Ger ARIMA orders per series
 best_pacf_acf_orders = analyze_arima_orders(decomposed_data,trend_orders)
 print("\nBest ARIMA Orders for Each Column:")
 print(best_pacf_acf_orders)
